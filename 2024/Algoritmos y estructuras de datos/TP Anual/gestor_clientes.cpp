@@ -1,0 +1,135 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring> 
+
+
+using namespace std;
+
+struct Usuario{
+    char name[50];
+    char username[50];
+    int dni;
+    int loginCode;
+    int balance;
+};
+
+bool validateUsername(char username[50]){
+    Usuario user2;
+    bool encontrado = false;
+
+    // Abrir el archivo en modo lectura binaria
+    FILE* archivo = fopen("archivo.dat", "rb");
+    if (archivo != nullptr) {
+        while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
+            if (strcmp(user2.username,username) == 0) {
+                encontrado = true;
+                break; // Se encontró el DNI, no necesitamos seguir buscando
+            }
+        }
+
+        fclose(archivo); // Asegúrate de cerrar el archivo al finalizar
+    }
+
+    if (encontrado) {
+        cout << "El Username " << username << " está en uso." << endl;}
+
+    return encontrado;
+}
+bool validateDni(int dni) {
+    Usuario user2;
+    bool encontrado = false;
+
+    // Abrir el archivo en modo lectura binaria
+    FILE* archivo = fopen("archivo.dat", "rb");
+    if (archivo != nullptr) {
+        while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
+            if (user2.dni == dni) {
+                encontrado = true;
+                break; // Se encontró el DNI, no necesitamos seguir buscando
+            }
+        }
+
+        fclose(archivo); // Asegúrate de cerrar el archivo al finalizar
+    }
+
+    if (encontrado) {
+        cout << "El DNI " << dni << " está en uso." << endl;}
+
+    return encontrado;
+}
+
+Usuario signUp(){
+    Usuario user;
+    bool nombreValido = false;
+    bool dniValido = false;
+    bool usernameValido = false;
+    
+    
+    //Valido que el nombre sea valido
+    do{
+        cout<<"Ingrese su nombre completo: ";
+        cin.ignore(); // Ignorar cualquier carácter residual en el búfer
+        cin.getline(user.name, 50);
+
+        nombreValido = true;
+        for(int i = 0; i < strlen(user.name) ; i++){
+            if (!isalpha(user.name[i]) && !isspace(user.name[i])){
+                cout << "     El siguiente caracter no es valido en un nombre: " << user.name[i] << endl;
+                nombreValido = false;
+                break;
+            }
+        }
+    } while(!nombreValido);
+    
+    do{
+        cout<<"Ingrese su DNI: ";
+        cin >> user.dni;
+
+
+        dniValido = validateDni(user.dni);
+    }while(dniValido);
+        
+
+    do{
+        cout<<"Ingrese su Usuario: ";
+        cin.ignore(); // Ignorar cualquier carácter residual en el búfer
+        cin>>user.username;
+
+        nombreValido = true;
+        for(int i = 0; i < strlen(user.username) ; i++){
+            if (isspace(user.username[i])){
+                cout << "     El usuario no debe contener espacios " << user.username[i] << endl;
+                nombreValido = false;
+                break;
+            }
+        }
+        usernameValido = validateUsername(user.username);
+    } while(!nombreValido || usernameValido);
+
+
+    user.loginCode = 1234;
+
+    
+    return user;
+}
+
+int main(){
+    Usuario user;
+    user = signUp();
+
+    // Aquí deberías escribir el usuario en el archivo, si fuera necesario:
+    const char* nombreArchivo = "archivo.dat";
+    FILE* archivo = fopen(nombreArchivo, "ab");
+    if (archivo == NULL) {
+        cout << "Error al abrir el archivo." << endl;
+        return 0;
+    }
+    fwrite(&user, sizeof(Usuario), 1, archivo);
+    fclose(archivo);
+
+    return 0;
+}
+
+
+
+
