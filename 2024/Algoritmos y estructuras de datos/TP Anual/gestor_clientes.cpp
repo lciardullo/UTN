@@ -9,9 +9,13 @@ struct Usuario{
     char name[50];
     char username[50];
     int dni;
-    int loginCode;
+    char loginCode[50];
     int balance;
 };
+
+bool validateUsername(char username[50]);
+bool validateDni(int dni);
+Usuario signUp();
 
 bool validateUsername(char username[50]){
     Usuario user2;
@@ -35,6 +39,7 @@ bool validateUsername(char username[50]){
 
     return encontrado;
 }
+
 bool validateDni(int dni) {
     Usuario user2;
     bool encontrado = false;
@@ -68,7 +73,7 @@ Usuario signUp(){
     //Valido que el nombre sea valido
     do{
         cout<<"Ingrese su nombre completo: ";
-        cin.ignore(); // Ignorar cualquier carácter residual en el búfer
+        cin.ignore();
         cin.getline(user.name, 50);
 
         nombreValido = true;
@@ -107,9 +112,31 @@ Usuario signUp(){
     } while(!nombreValido || usernameValido);
 
 
-    user.loginCode = 1234;
+    do{
+        cout<<"Ingrese el código de logueo: ";
+        cin>>user.loginCode;
 
-    
+        nombreValido = true;
+        for(int i = 0; i < strlen(user.loginCode) ; i++){
+            if (isalpha(user.loginCode[i]) || isspace(user.loginCode[i])){
+                cout << "     El código no debe contener letras ni espacios: " << user.loginCode[i] << endl;
+                nombreValido = false;
+                break;
+            }
+        }
+    } while(!nombreValido);
+
+    user.balance = 10000;
+
+    const char* nombreArchivo = "archivo.dat";
+    FILE* archivo = fopen(nombreArchivo, "ab");
+    if (archivo == NULL) {
+        cout << "Error al abrir el archivo." << endl;
+        return user;
+    }
+    fwrite(&user, sizeof(Usuario), 1, archivo);
+    fclose(archivo);
+
     return user;
 }
 
@@ -118,14 +145,7 @@ int main(){
     user = signUp();
 
     // Aquí deberías escribir el usuario en el archivo, si fuera necesario:
-    const char* nombreArchivo = "archivo.dat";
-    FILE* archivo = fopen(nombreArchivo, "ab");
-    if (archivo == NULL) {
-        cout << "Error al abrir el archivo." << endl;
-        return 0;
-    }
-    fwrite(&user, sizeof(Usuario), 1, archivo);
-    fclose(archivo);
+
 
     return 0;
 }
