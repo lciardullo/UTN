@@ -54,7 +54,7 @@ bool validateDni(int dni) {
             }
         }
 
-        fclose(archivo); // Asegúrate de cerrar el archivo al finalizar
+        fclose(archivo);
     }
 
     if (encontrado) {
@@ -97,7 +97,7 @@ Usuario signUp(){
 
     do{
         cout<<"Ingrese su Usuario: ";
-        cin.ignore(); // Ignorar cualquier carácter residual en el búfer
+        cin.ignore();
         cin>>user.username;
 
         nombreValido = true;
