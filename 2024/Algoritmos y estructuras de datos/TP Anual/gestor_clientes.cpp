@@ -31,7 +31,7 @@ bool validateUsername(char username[50]){
             }
         }
 
-        fclose(archivo); // Asegúrate de cerrar el archivo al finalizar
+        fclose(archivo);
     }
 
     if (encontrado) {
