@@ -140,16 +140,6 @@ Usuario signUp(){
     return user;
 }
 
-int main(){
-    Usuario user;
-    user = signUp();
-
-    // Aquí deberías escribir el usuario en el archivo, si fuera necesario:
-
-
-    return 0;
-}
-
 
 
 
