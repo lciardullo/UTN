@@ -53,7 +53,11 @@ bool validateDni(int dni) {
             }
         }
 
+<<<<<<< HEAD
         fclose(archivo); 
+=======
+        fclose(archivo);
+>>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
     }
 
     if (encontrado) {
@@ -139,6 +143,7 @@ Usuario signUp(){
     return user;
 }
 
+<<<<<<< HEAD
 int main(){
     Usuario user;
     user = signUp();
@@ -146,6 +151,8 @@ int main(){
     return 0;
 }
 
+=======
+>>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
 
 
 
