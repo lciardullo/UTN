@@ -49,15 +49,19 @@ bool validateDni(int dni) {
         while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
             if (user2.dni == dni) {
                 encontrado = true;
-                break; // Se encontró el DNI, no necesitamos seguir buscando
+                break;
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         fclose(archivo); 
 =======
         fclose(archivo);
 >>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
+=======
+        fclose(archivo); 
+>>>>>>> a65ca681826185366503ca861547d29a048560bc
     }
 
     if (encontrado) {
@@ -144,15 +148,21 @@ Usuario signUp(){
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a65ca681826185366503ca861547d29a048560bc
 int main(){
     Usuario user;
     user = signUp();
 
     return 0;
+<<<<<<< HEAD
 }
 
 =======
 >>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
+=======
+>>>>>>> a65ca681826185366503ca861547d29a048560bc
 
 
 
