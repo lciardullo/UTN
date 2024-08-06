@@ -27,7 +27,7 @@ bool validateUsername(char username[50]){
         while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
             if (strcmp(user2.username,username) == 0) {
                 encontrado = true;
-                break; // Se encontró el DNI, no necesitamos seguir buscando
+                break; 
             }
         }
 
@@ -44,17 +44,16 @@ bool validateDni(int dni) {
     Usuario user2;
     bool encontrado = false;
 
-    // Abrir el archivo en modo lectura binaria
     FILE* archivo = fopen("archivo.dat", "rb");
     if (archivo != nullptr) {
         while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
             if (user2.dni == dni) {
                 encontrado = true;
-                break; // Se encontró el DNI, no necesitamos seguir buscando
+                break;
             }
         }
 
-        fclose(archivo);
+        fclose(archivo); 
     }
 
     if (encontrado) {
@@ -70,7 +69,6 @@ Usuario signUp(){
     bool usernameValido = false;
     
     
-    //Valido que el nombre sea valido
     do{
         cout<<"Ingrese su nombre completo: ";
         cin.ignore();
@@ -114,7 +112,8 @@ Usuario signUp(){
 
     do{
         cout<<"Ingrese el código de logueo: ";
-        cin>>user.loginCode;
+        cin.ignore();
+        cin.getline(user.loginCode, 50);
 
         nombreValido = true;
         for(int i = 0; i < strlen(user.loginCode) ; i++){
@@ -140,6 +139,11 @@ Usuario signUp(){
     return user;
 }
 
+int main(){
+    Usuario user;
+    user = signUp();
+
+    return 0;
 
 
 
