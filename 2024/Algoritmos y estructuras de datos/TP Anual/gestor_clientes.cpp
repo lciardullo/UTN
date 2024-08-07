@@ -17,6 +17,13 @@ bool validateUsername(char username[50]);
 bool validateDni(int dni);
 Usuario signUp();
 
+int main(){
+    Usuario user;
+    user = signUp();
+
+    return 0;
+}
+
 bool validateUsername(char username[50]){
     Usuario user2;
     bool encontrado = false;
@@ -53,15 +60,7 @@ bool validateDni(int dni) {
             }
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         fclose(archivo); 
-=======
-        fclose(archivo);
->>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
-=======
-        fclose(archivo); 
->>>>>>> a65ca681826185366503ca861547d29a048560bc
     }
 
     if (encontrado) {
@@ -147,22 +146,8 @@ Usuario signUp(){
     return user;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a65ca681826185366503ca861547d29a048560bc
-int main(){
-    Usuario user;
-    user = signUp();
 
-    return 0;
-<<<<<<< HEAD
-}
 
-=======
->>>>>>> e1b485844880460eea71127f6bcf916adaee9e07
-=======
->>>>>>> a65ca681826185366503ca861547d29a048560bc
 
 
 
