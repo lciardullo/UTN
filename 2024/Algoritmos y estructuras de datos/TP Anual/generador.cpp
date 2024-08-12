@@ -28,14 +28,16 @@ int menu();
 void cargarValores(Transaccion &t, bool tipo);
 void modificarBalance(Transaccion t, int &balance);
 void listarTransacciones(Transaccion t);
+void borrarTransaccion(int id);
 
 int main(){
     char username[50];
     char loginCode[50];
     int opcion;
+    int id = 0;
     int flag = 0;
     Usuario user;
-        Transaccion t = {"",0, 0, true, 0};
+    Transaccion t = {"",0, 0, true, 0};
 
     
     do{
@@ -51,11 +53,11 @@ int main(){
         flag = 1; 
     }while(!signIn(t.name, loginCode, user));
     
-    cout<< "Balance actual de la cuenta es de $ "<<user.balance <<endl;
 
-    cout<<"El usuario es: "<<t.name <<endl <<endl;
+
     
     do{
+        cout<<endl <<"Balance $ "<<user.balance <<"   Usuario: "<<user.username <<endl <<endl;
         opcion = menu();
         switch(opcion){
             case 1:
@@ -71,6 +73,11 @@ int main(){
             case 3:
                 listarTransacciones(t);
                 break;
+            case 4:
+                cout<<"Ingrese el id a eliminar: ";
+                cin>>id;
+                borrarTransaccion(id);
+                break;
             case 5:
                 break;
             default:
@@ -83,7 +90,26 @@ int main(){
     return 0;
 }
 
+void borrarTransaccion(int id){
+    Transaccion tId, aux;
+
+    FILE* archivo = fopen("transacciones.dat", "rb+");
+    if (archivo != NULL) {
+        while (fread(&tId, sizeof(Transaccion), 1, archivo) == 1) {
+            cout<<tId.id;
+            if (tId.id == id) {
+                tId = {"Borrado"};
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+                fwrite(&tId, sizeof(Transaccion), 1, archivo);
+                break;
+            }
+        }
+        fclose(archivo);
+    }
+}
 void modificarBalance(Transaccion t, int &balance){
+    Usuario user;
+
     if(t.ingreso){
         balance = balance + t.monto;
     }
@@ -96,6 +122,21 @@ void modificarBalance(Transaccion t, int &balance){
         }
     }
     cout<< "Su saldo actual es de: "<< balance<< endl<< endl;
+
+
+    FILE* archivo = fopen("archivo.dat", "rb+");
+    if (archivo != NULL) {
+        while (fread(&user, sizeof(Usuario), 1, archivo) == 1) {
+            if (strcasecmp(user.username, t.name) == 0) {
+                user.balance = balance;
+                fseek(archivo, -sizeof(Usuario), SEEK_CUR);
+                fwrite(&user, sizeof(Usuario), 1, archivo);
+                break;
+            }
+        }
+        fclose(archivo);
+    }
+
 }
 
 void cargarValores(Transaccion &t, bool tipo){
@@ -150,6 +191,7 @@ Transaccion transaccion1(Transaccion operacion){
         fseek(archivo, -sizeof(Transaccion), SEEK_END);
         if(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
             operacion.id=idValidation.id + 1;
+            fclose(archivo);
         }
 
     }
@@ -189,8 +231,9 @@ void listarTransacciones(Transaccion t){
         }
         cout<<"Presione cualquier letra para volver al menu.";
         getch();
-        cout<<endl;
+        cout<<endl<<endl;
     }
+
 bool signIn(char username[50],char loginCode[50], Usuario &user) {
     bool ingresoValido = false;
 
@@ -211,11 +254,11 @@ bool signIn(char username[50],char loginCode[50], Usuario &user) {
 
 int menu(){
     int opcion = 0;
-    cout<<"1. Ingresar dinero"<< endl;
-    cout<<"2. Egresar Dinero"<< endl;
-    cout<<"3. Listar transacciones"<<endl;
-    cout<<"4. Eliminar transaccion"<<endl;
-    cout<<"5. Salir"<<endl;
+    cout<<"     1. Ingresar dinero"<< endl;
+    cout<<"     2. Egresar Dinero"<< endl;
+    cout<<"     3. Listar transacciones"<<endl;
+    cout<<"     4. Eliminar transaccion"<<endl;
+    cout<<"     5. Salir"<<endl;
     cout << "Seleccione una opción: ";
     cin>>opcion;
 
