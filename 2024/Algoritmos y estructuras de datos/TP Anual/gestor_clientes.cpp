@@ -30,7 +30,7 @@ bool validateUsername(char username[50]){
 
     // Abrir el archivo en modo lectura binaria
     FILE* archivo = fopen("archivo.dat", "rb");
-    if (archivo != nullptr) {
+    if (archivo != NULL) {
         while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
             if (strcmp(user2.username,username) == 0) {
                 encontrado = true;
@@ -52,7 +52,7 @@ bool validateDni(int dni) {
     bool encontrado = false;
 
     FILE* archivo = fopen("archivo.dat", "rb");
-    if (archivo != nullptr) {
+    if (archivo != NULL) {
         while (fread(&user2, sizeof(Usuario), 1, archivo) == 1) {
             if (user2.dni == dni) {
                 encontrado = true;
