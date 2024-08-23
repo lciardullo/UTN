@@ -6,6 +6,7 @@ using namespace std;
 
 #define AÑO_ACTUAL 2024
 #define AÑO_INICIO 1900
+#define FECHA_ACTUAL 20240823
 
 struct Usuario{
     char name[50];
@@ -76,6 +77,8 @@ void maximaTransaccionUltimos30Dias(){
     int contador = 0;
     int contadorAux = 0;
     int flag = 0;
+    int fechaActual = FECHA_ACTUAL;
+    int fechaUltimos30Dias = diaInicial(fechaActual);
 
     const char* nombreArchivoGestor = "archivo.dat";
     FILE * archivoGestor= fopen(nombreArchivoGestor, "rb");
@@ -98,7 +101,7 @@ void maximaTransaccionUltimos30Dias(){
             fseek(archivo, 0, SEEK_SET);
             contador = 0;
             while(fread(&monto, sizeof(Transaccion), 1, archivo) == 1){
-                if((strcasecmp(monto.name, user.username) == 0) && (monto.ingreso)){
+                if((strcasecmp(monto.name, user.username) == 0) && (monto.ingreso) && (monto.fecha <= fechaActual)&& (monto.fecha >= fechaUltimos30Dias)){
                     contador++;
                 }
             }
