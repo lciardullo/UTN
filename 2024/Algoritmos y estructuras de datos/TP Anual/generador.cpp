@@ -5,6 +5,9 @@
 
 using namespace std;
 
+#define AÑO_ACTUAL 2024
+#define AÑO_INICIO 1900
+
 struct Usuario{
     char name[50];
     char username[50];
@@ -18,7 +21,7 @@ struct Transaccion{
     int id;
     int monto;
     bool ingreso;
-    int fecha; //ddmmaaaa
+    int fecha; //aaaammdd
 };
 
 
@@ -168,11 +171,13 @@ void cargarValores(Transaccion &t, bool tipo){
             cout<<"Ingrese la fecha: ";
             cin>> t.fecha;
         }
-        mes = t.fecha % 1000000;
-        mes = mes / 10000;
-        año = t.fecha % 10000; 
-        if ((t.fecha / 1000000 > 31) || (t.fecha / 1000000 <= 0) || (mes>12) || (mes<=0) || ( año>9999)|| (año<=0)) {
+        int año = t.fecha / 10000;
+        int mes = (t.fecha / 100) % 100;
+        int dia = t.fecha % 100;
+
+        if ((año> AÑO_ACTUAL) || (año < AÑO_INICIO) || (mes>12) || (mes<=0) || ( dia<=0)|| (dia>30)) {
             flag = 1;
+            cout<<año<<endl<<mes<<endl<<dia;
         } 
 
     }while(flag);   
@@ -229,8 +234,6 @@ void listarTransacciones(Transaccion t){
             }
             fclose(archivo);
         }
-        cout<<"Presione cualquier letra para volver al menu.";
-        getch();
         cout<<endl<<endl;
     }
 
