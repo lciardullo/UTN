@@ -31,15 +31,16 @@ void mostrarMontoMaximo();
 void listarCantidadIngresoEgreso(char t[50], int mes, int año);
 void seleccionarUsuario(char t[50]);
 bool validarCliente(char username[50]);
-//void listarTransacciones(char t[50]);
+void listarTransacciones(char t[50]);
 int cantidadTransaccionesCliente(char name[50]);
 int diaInicial(int fechaActual);
 void maximaTransaccionUltimos30Dias();
+void insertar(Transaccion vec[], int &len, Transaccion valor, int pos);
+void insertarOrdenado(Transaccion vec[], int &len, Transaccion valor);
 
 
 int main(){
     int opcion;
-    //Transaccion t = {"",0, 0, true, 0};
     char t[50];
 
     do{
@@ -48,7 +49,7 @@ int main(){
         switch(opcion){
             case 1:
                 seleccionarUsuario(t);
-                //listarTransacciones(t);
+                listarTransacciones(t);
                 break;
             case 2:
                 seleccionarUsuario(t);
@@ -59,6 +60,8 @@ int main(){
                 break;
             case 4:
                 maximaTransaccionUltimos30Dias();
+                break;
+            case 5:
                 break;
             default:
                 cout<<"Valor incorrecto";
@@ -170,7 +173,6 @@ void mostrarMontoMaximo(){
     
 }
 
-
 int ingresarAño(){
     int año;
     int flag = 0;
@@ -240,47 +242,45 @@ int cantidadTransaccionesCliente(char name[50]){
 }
 
 void listarCantidadIngresoEgreso(char t[50], int año, int mes){
-        Transaccion idValidation;
-        int cantEgresos = 0, CantIngresos = 0;
-        int aux_mes = 0;
-        int aux_año = 0;
+    Transaccion idValidation;
+    int cantEgresos = 0, CantIngresos = 0;
+    int aux_mes = 0;
+    int aux_año = 0;
 
-        const char* nombreArchivo = "transacciones.dat";
-    
-        FILE * archivo = fopen(nombreArchivo, "rb");
-        if (archivo == NULL) {
-            cout<<"Error al abrir el archivo"<< endl;
-            fclose(archivo);
-        }
-        else{
-            fseek(archivo, 0, SEEK_SET);
-            while(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
-                if(strcasecmp(idValidation.name, t) == 0){
-                    aux_mes = (idValidation.fecha / 100) % 100;
-                    aux_año = idValidation.fecha / 10000;
-                    cout<<aux_mes<<endl;
-                    cout<<aux_año<<endl;
-                    if ((aux_mes == mes) && (aux_año == año)){
+    const char* nombreArchivo = "transacciones.dat";
 
-                        cout<<endl <<" El id de la transacción es: "<< idValidation.id<< endl;
-                        if(idValidation.ingreso){
-                            cout<<" El monto ingresado fue de: "<< idValidation.monto<< endl;
-                            CantIngresos++;
-                        }
-                        else{
-                            cout<<" El monto extraido fue de: "<< idValidation.monto<< endl;
-                            cantEgresos++;
-                        }
-                        cout<<" Fecha: "<< idValidation.fecha<< endl;
-                    }    
-                }
-            }
-            fclose(archivo);
-            cout<<endl<<"La cantidad de ingresos fue de: "<< CantIngresos<< endl;
-            cout<<"La cantidad de egresos fue de:  "<< cantEgresos<< endl;
-        }
-        cout<<endl<<endl;
+    FILE * archivo = fopen(nombreArchivo, "rb");
+    if (archivo == NULL) {
+        cout<<"Error al abrir el archivo"<< endl;
+        fclose(archivo);
     }
+    else{
+        fseek(archivo, 0, SEEK_SET);
+        while(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
+            if(strcasecmp(idValidation.name, t) == 0){
+                aux_mes = (idValidation.fecha / 100) % 100;
+                aux_año = idValidation.fecha / 10000;
+                if ((aux_mes == mes) && (aux_año == año)){
+
+                    cout<<endl <<" El id de la transacción es: "<< idValidation.id<< endl;
+                    if(idValidation.ingreso){
+                        cout<<" El monto ingresado fue de: "<< idValidation.monto<< endl;
+                        CantIngresos++;
+                    }
+                    else{
+                        cout<<" El monto extraido fue de: "<< idValidation.monto<< endl;
+                        cantEgresos++;
+                    }
+                    cout<<" Fecha: "<< idValidation.fecha<< endl;
+                }    
+            }
+        }
+        fclose(archivo);
+        cout<<endl<<"La cantidad de ingresos fue de: "<< CantIngresos<< endl;
+        cout<<"La cantidad de egresos fue de:  "<< cantEgresos<< endl;
+    }
+    cout<<endl<<endl;
+}
 
 void seleccionarUsuario(char t[50]){
     int flag = 0;
@@ -296,56 +296,81 @@ void seleccionarUsuario(char t[50]){
     }while(!validarCliente(t));
 }
 
-/* void listarTransacciones(char t[50]){ // Terminar función preguntar al profe dudas.
-        Transaccion idValidation;
-        Transaccion listado[5];
-        int contador = 0;
-        int flag = 0;
-        int aux_fecha = 0;
+void insertar(Transaccion vec[], int &len, Transaccion valor, int pos) {
+    for (int i = len; i > pos; i--) {
+        vec[i] = vec[i - 1];
+    }
+    vec[pos] = valor;
+    len++;
+}
 
-        const char* nombreArchivo = "transacciones.dat";
+void insertarOrdenado(Transaccion vec[], int &len, Transaccion valor) {
+    int i = 0;
+    while (i < len && vec[i].fecha >= valor.fecha) {
+        i++;
+    }
+    if (i == len) {
+        vec[len] = valor;
+        len++;
+    } 
+    else {
+        insertar(vec, len, valor, i);
+    }
+}
 
-        for(int i = 0; i<5 ; i++){
-            listado[i].id = 0;
-        }
+void listarTransacciones(char t[50]){ // Terminar función preguntar al profe dudas.
+    Transaccion transacciones[100];
+    Transaccion user;
+    int contador = 0, CantIngresos = 0, len = 50;
+    
 
-        FILE * archivo = fopen(nombreArchivo, "rb");
-        if (archivo == NULL) {
-            cout<<"Error al abrir el archivo"<< endl;
-            fclose(archivo);
-        }
-        else{
-            fseek(archivo, 0, SEEK_SET);
+    for (int i = 0; i < 100; ++i) {
+        strcpy(transacciones[i].name, "");  // Inicializar el string a vacío
+        transacciones[i].id = 0;
+        transacciones[i].monto = 0;
+        transacciones[i].ingreso = false;
+        transacciones[i].fecha = 0;
+    }
 
-            while(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
-                if(strcasecmp(idValidation.name, t) == 0){
-                    if(contador < 5){
-                        listado[contador] = idValidation;
-                        contador++;
-                    }
-                    else{
-                        contador = 0;
-                        for(int i = 0; i<5 ; i++){
-                            if (listado[i].id != 0){
-                                cout<<listado[i].id<<endl;
-                            }
-                            listado[i].id = 0;
-                        }
-                        listado[contador] = idValidation;
-                        contador++;
-                    }
-                }
+    const char* nombreArchivo = "transacciones.dat";
+    FILE * archivo = fopen(nombreArchivo, "rb");
+    
+    if (archivo == NULL)
+    {
+        cout<<"Error al abrir el archivo"<< endl;
+        fclose(archivo);   
+    }
+    else{
+        fseek(archivo, 0, SEEK_SET);
+        while(fread(&user, sizeof(Transaccion), 1, archivo) == 1){
+            if(strcasecmp(user.name, t) == 0){
+                insertarOrdenado(transacciones, len, user);
+                CantIngresos++;
             }
-            for(int i = 0; i<5 ; i++){
-                if (listado[i].id != 0){
-                    cout<<listado[i].id<<endl;
-                }
-            }
-            fclose(archivo);
         }
-        cout<<"Presione cualquier letra para volver al menu.";
-        cout<<endl<<endl;
-    } */
+        int cantPag = (CantIngresos / 5) + 1;
+        int contadorPag = 0;
+        cout<<"Pagina "<< contadorPag + 1 << " - "<<cantPag <<endl;
+        for(int i = 0; i< len; i ++){
+            if ((contador % 5 == 0) && (contador != 0)) {
+                contadorPag++;
+                cout<<"Pagina "<< contadorPag  + 1 << " - "<<cantPag <<endl;
+            }
+            if(contadorPag == cantPag){
+                break;
+            }
+            if (transacciones[i].fecha != 0){
+                cout<< "ID: "<< transacciones[i].id<< endl;
+                cout<< "Fecha: "<< transacciones[i].fecha<< endl;
+                cout<< "Monto: "<< transacciones[i].monto<< endl;
+                cout<< endl;
+                contador++;
+            }
+        }
+        fclose(archivo);
+    }   
+}
+
 
 bool validarCliente(char username[50]) {
     bool ingresoValido = false;
@@ -393,7 +418,7 @@ int menu(){
     cout<<"     1. Listar transacciones de un cliente por fecha(De a 5)"<< endl;
     cout<<"     2. Listar la cantidad de ingresos y egresos por mes de un cliente"<< endl;
     cout<<"     3. Listar la maxima transaccion de todos los clientes"<<endl;
-    cout<<"     4. Eliminar transaccion"<<endl;
+    cout<<"     4. Mostrar el cliente que más ingresos tuvo en los últimos 30 días. "<<endl;
     cout<<"     5. Salir"<<endl;
     cout << "Seleccione una opción: ";
     cin>>opcion;
