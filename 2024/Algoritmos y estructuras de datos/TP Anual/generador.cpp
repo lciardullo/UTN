@@ -32,6 +32,8 @@ void cargarValores(Transaccion &t, bool tipo);
 void modificarBalance(Transaccion t, int &balance);
 void listarTransacciones(Transaccion t);
 void borrarTransaccion(int id);
+int cantidadTransacciones();
+void ordenarArchivo();
 
 int main(){
     char username[50];
@@ -74,6 +76,7 @@ int main(){
                 modificarBalance(t, user.balance);
                 break;
             case 3:
+                ordenarArchivo();
                 listarTransacciones(t);
                 break;
             case 4:
@@ -91,6 +94,61 @@ int main(){
     
 
     return 0;
+}
+
+int cantidadTransacciones(){
+    Transaccion cantidad;
+    int contador = 0;
+    const char* nombreArchivo = "transacciones.dat";
+
+    FILE * archivo = fopen(nombreArchivo, "rb");
+    if (archivo == NULL) {
+        cout<<"Error al abrir el archivo"<< endl;
+        fclose(archivo);
+    }
+    else{
+
+        while(fread(&cantidad, sizeof(Transaccion), 1, archivo) == 1){
+            contador++;
+        }
+        fclose(archivo);
+    }
+    return contador;
+}
+
+void ordenarArchivo() {
+    int len = cantidadTransacciones();
+    Transaccion actual;
+    Transaccion despues;
+
+    const char* nombreArchivo = "transacciones.dat";
+
+    FILE *archivo = fopen(nombreArchivo, "r+b");
+    if (archivo == NULL) {
+        cout << "Error al abrir el archivo" << endl;
+        return;
+    }
+    for (int i = 0; i < len - 1; i++) {
+        fseek(archivo, 0, SEEK_SET);
+
+        for (int j = 0; j < len - i - 1; j++) {
+            fread(&actual, sizeof(Transaccion), 1, archivo);
+            fread(&despues, sizeof(Transaccion), 1, archivo);
+
+            if (actual.id > despues.id) {
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+
+                fwrite(&despues, sizeof(Transaccion), 1, archivo);
+                fwrite(&actual, sizeof(Transaccion), 1, archivo);
+
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+            } else {
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+            }
+        }
+    }
+    fclose(archivo);
 }
 
 void borrarTransaccion(int id){
@@ -185,57 +243,57 @@ void cargarValores(Transaccion &t, bool tipo){
 
 Transaccion transaccion1(Transaccion operacion){
     Transaccion idValidation;
+    int maxMonto = 0;
     const char* nombreArchivo = "transacciones.dat";
     
     FILE * archivo = fopen(nombreArchivo, "rb");
     if (archivo == NULL) {
         operacion.id = 1;
+    }
+    else{       
+        while (fread(&idValidation, sizeof(Transaccion), 1, archivo)) {
+            if (idValidation.id > maxMonto) {
+                maxMonto = idValidation.id;  // Actualizamos el máximo si encontramos uno mayor
+            }
+        }
         fclose(archivo);
     }
-    else{
-        fseek(archivo, -sizeof(Transaccion), SEEK_END);
-        if(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
-            operacion.id=idValidation.id + 1;
-            fclose(archivo);
-        }
 
-    }
-
-
+    operacion.id = maxMonto + 1;
     archivo = fopen(nombreArchivo, "ab");
     fwrite(&operacion, sizeof(Transaccion), 1, archivo);
     fclose(archivo);
-    return idValidation;
+    return operacion;
 }
 
 void listarTransacciones(Transaccion t){
-        Transaccion idValidation;
+    Transaccion idValidation;
 
-        const char* nombreArchivo = "transacciones.dat";
-    
-        FILE * archivo = fopen(nombreArchivo, "rb");
-        if (archivo == NULL) {
-            cout<<"Error al abrir el archivo"<< endl;
-            fclose(archivo);
-        }
-        else{
-            fseek(archivo, 0, SEEK_SET);
-            while(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
-                if(strcasecmp(idValidation.name, t.name) == 0){
-                    cout<<endl <<" El id de la transacción es: "<< idValidation.id<< endl;
-                    if(idValidation.ingreso){
-                        cout<<" El monto ingresado fue de: "<< idValidation.monto<< endl;
-                    }
-                    else{
-                        cout<<" El monto extraido fue de: "<< idValidation.monto<< endl;
-                    }
-                    cout<<" La fecha en que se realizo la transaccion: "<< idValidation.fecha<< endl;
-                }
-            }
-            fclose(archivo);
-        }
-        cout<<endl<<endl;
+    const char* nombreArchivo = "transacciones.dat";
+
+    FILE * archivo = fopen(nombreArchivo, "rb");
+    if (archivo == NULL) {
+        cout<<"Error al abrir el archivo"<< endl;
+        fclose(archivo);
     }
+    else{
+        fseek(archivo, 0, SEEK_SET);
+        while(fread(&idValidation, sizeof(Transaccion), 1, archivo) == 1){
+            if(strcasecmp(idValidation.name, t.name) == 0){
+                cout<<endl <<" El id de la transacción es: "<< idValidation.id<< endl;
+                if(idValidation.ingreso){
+                    cout<<" El monto ingresado fue de: "<< idValidation.monto<< endl;
+                }
+                else{
+                    cout<<" El monto extraido fue de: "<< idValidation.monto<< endl;
+                }
+                cout<<" La fecha en que se realizo la transaccion: "<< idValidation.fecha<< endl;
+            }
+        }
+        fclose(archivo);
+    }
+    cout<<endl<<endl;
+}
 
 bool signIn(char username[50],char loginCode[50], Usuario &user) {
     bool ingresoValido = false;

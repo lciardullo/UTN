@@ -35,8 +35,8 @@ void listarTransacciones(char t[50]);
 int cantidadTransaccionesCliente(char name[50]);
 int diaInicial(int fechaActual);
 void maximaTransaccionUltimos30Dias();
-void insertar(Transaccion vec[], int &len, Transaccion valor, int pos);
-void insertarOrdenado(Transaccion vec[], int &len, Transaccion valor);
+int cantidadTransacciones(char name[50]);
+void ordenarArchivo();
 
 
 int main(){
@@ -49,6 +49,7 @@ int main(){
         switch(opcion){
             case 1:
                 seleccionarUsuario(t);
+                ordenarArchivo();
                 listarTransacciones(t);
                 break;
             case 2:
@@ -70,6 +71,61 @@ int main(){
     }while(opcion!=5);
 
     return 0;
+}
+
+int cantidadTransacciones(){
+    Transaccion cantidad;
+    int contador = 0;
+    const char* nombreArchivo = "transacciones.dat";
+
+    FILE * archivo = fopen(nombreArchivo, "rb");
+    if (archivo == NULL) {
+        cout<<"Error al abrir el archivo"<< endl;
+        fclose(archivo);
+    }
+    else{
+
+        while(fread(&cantidad, sizeof(Transaccion), 1, archivo) == 1){
+            contador++;
+        }
+        fclose(archivo);
+    }
+    return contador;
+}
+
+void ordenarArchivo() {
+    int len = cantidadTransacciones();
+    Transaccion actual;
+    Transaccion despues;
+
+    const char* nombreArchivo = "transacciones.dat";
+
+    FILE *archivo = fopen(nombreArchivo, "r+b");
+    if (archivo == NULL) {
+        cout << "Error al abrir el archivo" << endl;
+        return;
+    }
+    for (int i = 0; i < len - 1; i++) {
+        fseek(archivo, 0, SEEK_SET);
+
+        for (int j = 0; j < len - i - 1; j++) {
+            fread(&actual, sizeof(Transaccion), 1, archivo);
+            fread(&despues, sizeof(Transaccion), 1, archivo);
+
+            if (actual.fecha < despues.fecha) {
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+
+                fwrite(&despues, sizeof(Transaccion), 1, archivo);
+                fwrite(&actual, sizeof(Transaccion), 1, archivo);
+
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+            } else {
+                fseek(archivo, -sizeof(Transaccion), SEEK_CUR);
+            }
+        }
+    }
+    fclose(archivo);
 }
 
 void maximaTransaccionUltimos30Dias(){
@@ -296,41 +352,11 @@ void seleccionarUsuario(char t[50]){
     }while(!validarCliente(t));
 }
 
-void insertar(Transaccion vec[], int &len, Transaccion valor, int pos) {
-    for (int i = len; i > pos; i--) {
-        vec[i] = vec[i - 1];
-    }
-    vec[pos] = valor;
-    len++;
-}
-
-void insertarOrdenado(Transaccion vec[], int &len, Transaccion valor) {
-    int i = 0;
-    while (i < len && vec[i].fecha >= valor.fecha) {
-        i++;
-    }
-    if (i == len) {
-        vec[len] = valor;
-        len++;
-    } 
-    else {
-        insertar(vec, len, valor, i);
-    }
-}
-
 void listarTransacciones(char t[50]){ // Terminar función preguntar al profe dudas.
     Transaccion transacciones[100];
     Transaccion user;
-    int contador = 0, CantIngresos = 0, len = 50;
-    
-
-    for (int i = 0; i < 100; ++i) {
-        strcpy(transacciones[i].name, "");  // Inicializar el string a vacío
-        transacciones[i].id = 0;
-        transacciones[i].monto = 0;
-        transacciones[i].ingreso = false;
-        transacciones[i].fecha = 0;
-    }
+    int contador = 0, CantIngresos = 0, flag = 0, len = 50;
+    char sigo;
 
     const char* nombreArchivo = "transacciones.dat";
     FILE * archivo = fopen(nombreArchivo, "rb");
@@ -344,27 +370,41 @@ void listarTransacciones(char t[50]){ // Terminar función preguntar al profe du
         fseek(archivo, 0, SEEK_SET);
         while(fread(&user, sizeof(Transaccion), 1, archivo) == 1){
             if(strcasecmp(user.name, t) == 0){
-                insertarOrdenado(transacciones, len, user);
                 CantIngresos++;
             }
         }
         int cantPag = (CantIngresos / 5) + 1;
         int contadorPag = 0;
+        
         cout<<"Pagina "<< contadorPag + 1 << " - "<<cantPag <<endl;
-        for(int i = 0; i< len; i ++){
-            if ((contador % 5 == 0) && (contador != 0)) {
-                contadorPag++;
-                cout<<"Pagina "<< contadorPag  + 1 << " - "<<cantPag <<endl;
-            }
-            if(contadorPag == cantPag){
-                break;
-            }
-            if (transacciones[i].fecha != 0){
-                cout<< "ID: "<< transacciones[i].id<< endl;
-                cout<< "Fecha: "<< transacciones[i].fecha<< endl;
-                cout<< "Monto: "<< transacciones[i].monto<< endl;
-                cout<< endl;
-                contador++;
+        fseek(archivo, 0, SEEK_SET);
+        while(fread(&user, sizeof(Transaccion), 1, archivo) == 1){
+            if(strcasecmp(user.name, t) == 0){
+                if ((contador % 5 == 0) && (contador != 0)) {
+                    cout<<"Queres seguir? (s/n): ";
+                    cin>>sigo;
+                    do{
+                        if (sigo=='n'){
+                            flag = 2;
+                        }
+                        else if (sigo=='s'){
+                            contadorPag++;
+                            cout<<"Pagina "<< contadorPag  + 1 << " - "<<cantPag <<endl;
+                            flag = 0;
+                        }else{
+                            flag == 1;
+                        }                    
+                    }while(flag == 1);
+
+                }
+                if (user.fecha != 0 && flag != 2){
+                    cout<< "ID: "<< user.id<< endl;
+                    cout<< "Fecha: "<< user.fecha<< endl;
+                    cout<< "Monto: "<< user.monto<< endl;
+                    cout<< endl;
+                    contador++;
+                }
+                else{break;}
             }
         }
         fclose(archivo);
