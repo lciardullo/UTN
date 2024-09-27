@@ -157,7 +157,6 @@ void borrarTransaccion(int id){
     FILE* archivo = fopen("transacciones.dat", "rb+");
     if (archivo != NULL) {
         while (fread(&tId, sizeof(Transaccion), 1, archivo) == 1) {
-            cout<<tId.id;
             if (tId.id == id) {
                 tId = {"Borrado"};
                 fseek(archivo, -sizeof(Transaccion), SEEK_CUR);

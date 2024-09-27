@@ -6,7 +6,7 @@ using namespace std;
 
 #define AÑO_ACTUAL 2024
 #define AÑO_INICIO 1900
-#define FECHA_ACTUAL 20240823
+#define FECHA_ACTUAL 20241212
 
 struct Usuario{
     char name[50];

@@ -59,7 +59,6 @@ bool validateDni(int dni) {
                 break;
             }
         }
-
         fclose(archivo); 
     }
 
