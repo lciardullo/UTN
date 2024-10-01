@@ -24,25 +24,38 @@ struct Transaccion{
     int fecha; //ddmmaaaa
 };
 
+//Sofi
 int menu();
+int diaInicial(int fechaActual);
+
+//Lauti
+int cantidadTransaccionesCliente(char name[50]);
+int cantidadTransacciones(char name[50]);
+void mostrarMontoMaximo();
+
+//Mati
 int seleccionarMes();
 int ingresarAño();
-void mostrarMontoMaximo();
 void listarCantidadIngresoEgreso(char t[50], int mes, int año);
+
+//Santi
 void seleccionarUsuario(char t[50]);
 bool validarCliente(char username[50]);
-void listarTransacciones(char t[50]);
-int cantidadTransaccionesCliente(char name[50]);
-int diaInicial(int fechaActual);
-void maximaTransaccionUltimos30Dias();
-int cantidadTransacciones(char name[50]);
+
+//Lucas
 void ordenarArchivo();
+void listarTransacciones(char t[50]);
+void maximaTransaccionUltimos30Dias();
+
+
+
 
 
 int main(){
     int opcion;
     char t[50];
 
+//Sofi
     do{
         opcion = menu();
 
@@ -73,6 +86,7 @@ int main(){
     return 0;
 }
 
+
 int cantidadTransacciones(){
     Transaccion cantidad;
     int contador = 0;
@@ -93,6 +107,7 @@ int cantidadTransacciones(){
     return contador;
 }
 
+//Lucas
 void ordenarArchivo() {
     int len = cantidadTransacciones();
     Transaccion actual;
@@ -128,6 +143,7 @@ void ordenarArchivo() {
     fclose(archivo);
 }
 
+//Lauti
 void maximaTransaccionUltimos30Dias(){
     Transaccion monto;
     Usuario user;

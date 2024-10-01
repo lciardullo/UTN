@@ -24,16 +24,23 @@ struct Transaccion{
     int fecha; //aaaammdd
 };
 
-
+//Santi
 bool signIn(char username[50], char loginCode[50], Usuario &user);
-Transaccion transaccion1(Transaccion operacion);
+
+//Sofi
 int menu();
+//Lauti
 void cargarValores(Transaccion &t, bool tipo);
 void modificarBalance(Transaccion t, int &balance);
+
+//Mati OJO ME CONFUNDI Y NO ES NECESARIO QUE RETORNE ALGO en el de transacciones por si pregunta el profe
+Transaccion transaccion1(Transaccion operacion);
 void listarTransacciones(Transaccion t);
-void borrarTransaccion(int id);
 int cantidadTransacciones();
+
+//Lucas
 void ordenarArchivo();
+void borrarTransaccion(int id);
 
 int main(){
     char username[50];
@@ -44,7 +51,7 @@ int main(){
     Usuario user;
     Transaccion t = {"",0, 0, true, 0};
 
-    
+//santi    
     do{
         if (flag == 1){
             cout << "Usuario o contraseña incorrecta"<< endl;
@@ -60,7 +67,7 @@ int main(){
     
 
 
-    
+//Sofi    
     do{
         cout<<endl <<"Balance $ "<<user.balance <<"   Usuario: "<<user.username <<endl <<endl;
         opcion = menu();
@@ -96,6 +103,7 @@ int main(){
     return 0;
 }
 
+//Mati
 int cantidadTransacciones(){
     Transaccion cantidad;
     int contador = 0;
@@ -116,6 +124,7 @@ int cantidadTransacciones(){
     return contador;
 }
 
+//Lucas
 void ordenarArchivo() {
     int len = cantidadTransacciones();
     Transaccion actual;
@@ -151,6 +160,7 @@ void ordenarArchivo() {
     fclose(archivo);
 }
 
+//Lucas
 void borrarTransaccion(int id){
     Transaccion tId, aux;
 
@@ -167,6 +177,8 @@ void borrarTransaccion(int id){
         fclose(archivo);
     }
 }
+
+//Lauti
 void modificarBalance(Transaccion t, int &balance){
     Usuario user;
 
@@ -199,6 +211,7 @@ void modificarBalance(Transaccion t, int &balance){
 
 }
 
+//Lauti
 void cargarValores(Transaccion &t, bool tipo){
     int flag = 0;
     int mes, año;
@@ -240,6 +253,7 @@ void cargarValores(Transaccion &t, bool tipo){
     }while(flag);   
 }
 
+//Mati OJO ME CONFUNDI Y NO ES NECESARIO QUE RETORNE ALGO
 Transaccion transaccion1(Transaccion operacion){
     Transaccion idValidation;
     int maxMonto = 0;
@@ -265,6 +279,7 @@ Transaccion transaccion1(Transaccion operacion){
     return operacion;
 }
 
+//Sofi
 void listarTransacciones(Transaccion t){
     Transaccion idValidation;
 
@@ -294,6 +309,7 @@ void listarTransacciones(Transaccion t){
     cout<<endl<<endl;
 }
 
+//Santi
 bool signIn(char username[50],char loginCode[50], Usuario &user) {
     bool ingresoValido = false;
 
