@@ -13,8 +13,10 @@ struct Usuario{
     int balance;
 };
 
+//Santi
 bool validateUsername(char username[50]);
 bool validateDni(int dni);
+//Lucas
 Usuario signUp();
 
 int main(){
